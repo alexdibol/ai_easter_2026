@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI for Financial Professionals | Architecture, Governance, and Institutional Practice</title>
+  <style>
+    :root {
+      --cambridge-blue: #003c71;
+      --cambridge-light: #e8f1f8;
+      --ink: #18212f;
+      --muted: #5f6b7a;
+      --line: #d8e1ea;
+      --paper: #ffffff;
+      --soft: #f6f8fb;
+      --accent: #b48a2c;
+      --accent-soft: #fff5dc;
+      --shadow: 0 18px 45px rgba(0, 35, 70, 0.12);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Georgia, 'Times New Roman', serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #ffffff 0%, var(--soft) 100%);
+      line-height: 1.65;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-inner {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand strong {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cambridge-blue);
+    }
+
+    .brand span {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .nav {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .nav a {
+      padding: 8px 10px;
+      border-radius: 999px;
+      transition: all 0.18s ease;
+    }
+
+    .nav a:hover {
+      color: var(--cambridge-blue);
+      background: var(--cambridge-light);
+    }
+
+    .hero {
+      padding: 78px 0 48px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.18fr 0.82fr;
+      gap: 44px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--cambridge-blue);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow::before {
+      content: '';
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: inline-block;
+    }
+
+    h1 {
+      font-size: clamp(2.45rem, 5vw, 5.05rem);
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+      color: var(--cambridge-blue);
+      margin-bottom: 26px;
+    }
+
+    .hero-copy {
+      font-size: 1.17rem;
+      color: #344255;
+      max-width: 790px;
+      margin-bottom: 22px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 13px 18px;
+      border-radius: 999px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      border: 1px solid transparent;
+      transition: all 0.18s ease;
+    }
+
+    .button.primary {
+      background: var(--cambridge-blue);
+      color: white;
+      box-shadow: 0 10px 24px rgba(0, 60, 113, 0.18);
+    }
+
+    .button.primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 30px rgba(0, 60, 113, 0.23);
+    }
+
+    .button.secondary {
+      background: white;
+      color: var(--cambridge-blue);
+      border-color: var(--line);
+    }
+
+    .button.secondary:hover {
+      background: var(--cambridge-light);
+    }
+
+    .hero-panel {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+    }
+
+    .hero-panel h2 {
+      color: var(--cambridge-blue);
+      font-size: 1.35rem;
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+
+    .hero-panel p {
+      color: var(--muted);
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+
+    .mini-list {
+      display: grid;
+      gap: 12px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.92rem;
+      color: #354255;
+    }
+
+    .mini-list div {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 14px;
+      background: #fbfdff;
+    }
+
+    section {
+      padding: 42px 0;
+    }
+
+    .section-header {
+      max-width: 900px;
+      margin-bottom: 28px;
+    }
+
+    .section-kicker {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    h2.section-title {
+      color: var(--cambridge-blue);
+      font-size: clamp(1.8rem, 3vw, 2.55rem);
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 12px;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .pillar {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 10px 28px rgba(0, 35, 70, 0.06);
+    }
+
+    .pillar .number {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--cambridge-light);
+      color: var(--cambridge-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .pillar h3 {
+      color: var(--cambridge-blue);
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+
+    .pillar p {
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .resource-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .resource-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 12px 34px rgba(0, 35, 70, 0.075);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    .resource-card-header {
+      padding: 24px 24px 18px;
+      background: linear-gradient(135deg, #ffffff 0%, #f3f7fb 100%);
+      border-bottom: 1px solid var(--line);
+      flex: 1;
+    }
+
+    .resource-label {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .resource-card h3 {
+      color: var(--cambridge-blue);
+      font-size: 1.45rem;
+      line-height: 1.18;
+      margin-bottom: 10px;
+    }
+
+    .resource-card p {
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .resource-links {
+      padding: 22px 24px 24px;
+      display: grid;
+      gap: 12px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .resource-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 13px 14px;
+      color: var(--cambridge-blue);
+      font-weight: 700;
+      transition: all 0.18s ease;
+    }
+
+    .resource-link:hover {
+      background: var(--cambridge-light);
+      transform: translateY(-1px);
+    }
+
+    .resource-link span:last-child {
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .volume-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .volume-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: 0 10px 28px rgba(0, 35, 70, 0.06);
+    }
+
+    .volume-tag {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .volume-card h3 {
+      color: var(--cambridge-blue);
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+
+    .volume-card p {
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .access-strip {
+      border-radius: var(--radius);
+      background: var(--cambridge-blue);
+      color: white;
+      padding: 34px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 28px;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    .access-strip h2 {
+      font-size: 2rem;
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+
+    .access-strip p {
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 1.03rem;
+    }
+
+    .access-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .access-buttons a {
+      background: white;
+      color: var(--cambridge-blue);
+      border-radius: 999px;
+      padding: 12px 15px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+
+    .footer {
+      padding: 44px 0 54px;
+      color: var(--muted);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 0.9rem;
+      border-top: 1px solid var(--line);
+      margin-top: 36px;
+    }
+
+    .footer-inner {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      gap: 22px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1000px) {
+      .hero-grid,
+      .resource-grid,
+      .pillars,
+      .volume-grid,
+      .access-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        display: none;
+      }
+
+      .hero {
+        padding-top: 48px;
+      }
+
+      .access-buttons {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page,
+      .topbar-inner,
+      .footer-inner {
+        width: min(100% - 26px, 1180px);
+      }
+
+      .hero-panel,
+      .pillar,
+      .volume-card,
+      .resource-card-header,
+      .resource-links,
+      .access-strip {
+        padding: 20px;
+      }
+
+      .hero-actions,
+      .button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <strong>AI for Financial Professionals</strong>
+        <span>Architecture, Governance, and Institutional Practice</span>
+      </div>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#course">Course</a>
+        <a href="#materials">Documents</a>
+        <a href="#volumes">Volumes</a>
+        <a href="#ecosystem">Resources</a>
+        <a href="#access">Quick Access</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero page" id="course">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Governance-First AI · Finance · Professional Practice</div>
+          <h1>AI for Financial Professionals under Governance</h1>
+          <p class="hero-copy">
+            This landing page provides a single, orderly point of access to the core materials for <em>AI for Financial Professionals: Architecture, Governance, and Institutional Practice</em>. The course is designed for financially literate learners who need to understand artificial intelligence as a professional, institutional, and governed capability.
+          </p>
+          <p class="hero-copy">
+            The book, handbook, and deck linked below are not isolated files. They operate as structured gateways into the full course ecosystem. Chapter by chapter, they provide access to books and papers, videos, podcasts, specialized decks, and Google Colab notebooks, allowing students to explore the material before and after class according to their curiosity, pace, and professional objectives.
+          </p>
+          <div class="hero-actions">
+            <a class="button primary" href="#materials">Access Core Documents</a>
+            <a class="button secondary" href="#volumes">View Course Architecture</a>
+          </div>
+        </div>
+
+        <aside class="hero-panel" aria-label="Course summary">
+          <h2>Course Orientation</h2>
+          <p>
+            The course frames AI as an institutional production system for financial judgment. It connects infrastructure, model mechanics, prompt engineering, agents, governance maturity, and frontier AI to the practical responsibilities of modern finance.
+          </p>
+          <div class="mini-list">
+            <div><strong>Purpose:</strong> Build AI literacy for financial professionals without reducing AI to hype, demos, or casual automation.</div>
+            <div><strong>Method:</strong> Combine books, decks, podcasts, videos, notebooks, and handbooks into a chapter-by-chapter learning system.</div>
+            <div><strong>Governance:</strong> Teach evidence boundaries, verification, auditability, reproducibility, escalation, and human accountability.</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="page" id="framework">
+      <div class="section-header">
+        <div class="section-kicker">Course Framework</div>
+        <h2 class="section-title">Capability and control must rise together</h2>
+        <p class="section-copy">
+          The course is not a generic introduction to artificial intelligence. It is a professional formation in AI as architecture, institutional capability, and governed practice. Finance students and professionals learn how AI systems are built, how they behave, how they fail, how they can be supervised, and how they can be responsibly deployed in high-accountability financial environments.
+        </p>
+      </div>
+
+      <div class="pillars">
+        <article class="pillar">
+          <div class="number">1</div>
+          <h3>Technical Literacy</h3>
+          <p>
+            Students learn the mechanics of infrastructure, data, representation, training, inference, model families, prompt systems, agents, and modern AI architectures without needing to become machine learning researchers.
+          </p>
+        </article>
+
+        <article class="pillar">
+          <div class="number">2</div>
+          <h3>Financial Application</h3>
+          <p>
+            The course connects AI methods to finance: risk, credit, valuation, disclosure, due diligence, portfolio construction, document interpretation, scenario generation, and decision support.
+          </p>
+        </article>
+
+        <article class="pillar">
+          <div class="number">3</div>
+          <h3>Governance Discipline</h3>
+          <p>
+            Governance is treated as a core design principle: evidence boundaries, structured outputs, verification status, deterministic gates, audit bundles, reproducibility, and human review are part of the system.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" id="materials">
+      <div class="section-header">
+        <div class="section-kicker">Core Documents</div>
+        <h2 class="section-title">Easy access to the course materials</h2>
+        <p class="section-copy">
+          The documents below provide immediate access to the central course materials. They are designed as navigational anchors for a broader resource ecosystem in which every substantive chapter can connect students to books and papers, videos, podcasts, specialized decks, and Colab notebooks.
+        </p>
+      </div>
+
+      <div class="resource-grid">
+        <article class="resource-card">
+          <div class="resource-card-header">
+            <div class="resource-label">Core Document 01</div>
+            <h3>Course Book</h3>
+            <p>
+              The main book develops the full architecture of the course: AI infrastructure, machine learning literacy, prompt engineering, AI agents, governance maturity, modern AI, and institutional practice.
+            </p>
+          </div>
+          <div class="resource-links">
+            <a class="resource-link" href="https://drive.google.com/file/d/1gq3Mjw63NCgbXsfMGI5fgbWAjBUMSuJf/view?usp=sharing" target="_blank" rel="noopener noreferrer"><span>Open Book</span><span>↗</span></a>
+          </div>
+        </article>
+
+        <article class="resource-card">
+          <div class="resource-card-header">
+            <div class="resource-label">Core Document 02</div>
+            <h3>Course Handbook</h3>
+            <p>
+              The handbook supports implementation, navigation, review, and applied use. It helps students move from conceptual understanding into disciplined workflows and practical exploration.
+            </p>
+          </div>
+          <div class="resource-links">
+            <a class="resource-link" href="https://drive.google.com/file/d/1qDI9AcrjNOAcT8hFyvcwjrDxthq9CuXz/view?usp=sharing" target="_blank" rel="noopener noreferrer"><span>Open Handbook</span><span>↗</span></a>
+          </div>
+        </article>
+
+        <article class="resource-card">
+          <div class="resource-card-header">
+            <div class="resource-label">Core Document 03</div>
+            <h3>Course Deck</h3>
+            <p>
+              The deck provides the visual map of the course. It compresses the hierarchy of ideas and gives students a fast way to review the course architecture, sequence, and governance logic.
+            </p>
+          </div>
+          <div class="resource-links">
+            <a class="resource-link" href="https://drive.google.com/file/d/1iVTlEOUoGvkEqeIDX5fC4HPqA-7dLVlT/view?usp=sharing" target="_blank" rel="noopener noreferrer"><span>Open Deck</span><span>↗</span></a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" id="volumes">
+      <div class="section-header">
+        <div class="section-kicker">Course Architecture</div>
+        <h2 class="section-title">Six volumes plus a final capstone</h2>
+        <p class="section-copy">
+          The curriculum is organized as a six-volume ladder. The sequence moves from infrastructure to model mechanics, from controlled generation to agents, from governance maturity to modern AI, and finally toward a synthetic capstone operating model.
+        </p>
+      </div>
+
+      <div class="volume-grid">
+        <article class="volume-card">
+          <div class="volume-tag">Volume 01</div>
+          <h3>AI Infrastructure</h3>
+          <p>AI as an industrial and institutional production system shaped by compute, cloud, deployment economics, and governance.</p>
+        </article>
+        <article class="volume-card">
+          <div class="volume-tag">Volume 02</div>
+          <h3>AI and ML 101</h3>
+          <p>Mechanical literacy in model families, representation, training, inference, diagnostics, evaluation, and failure modes.</p>
+        </article>
+        <article class="volume-card">
+          <div class="volume-tag">Volume 03</div>
+          <h3>Prompt Engineering</h3>
+          <p>Prompting as a governance discipline built around contracts, evidence boundaries, schemas, and fail-closed generation.</p>
+        </article>
+        <article class="volume-card">
+          <div class="volume-tag">Volume 04</div>
+          <h3>AI Agents</h3>
+          <p>Agents as bounded workflow components inside auditable orchestration graphs, not as autonomous digital employees.</p>
+        </article>
+        <article class="volume-card">
+          <div class="volume-tag">Volume 05</div>
+          <h3>Governance Maturity</h3>
+          <p>The maturity ladder from experimental use to reusable assets and enterprise-grade governed AI operating models.</p>
+        </article>
+        <article class="volume-card">
+          <div class="volume-tag">Volume 06</div>
+          <h3>Modern AI</h3>
+          <p>Reasoning models, long context, memory, fine-tuning, surrogates, multimodality, Bayesian AI, diffusion, and frontier topics.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" id="ecosystem">
+      <div class="section-header">
+        <div class="section-kicker">Resource Ecosystem</div>
+        <h2 class="section-title">Chapter-by-chapter learning routes</h2>
+        <p class="section-copy">
+          Each substantive chapter supports multiple ways of learning. A student may begin with the deck, watch the video, listen to the podcast, read the chapter, and then open the notebook. Another may begin with implementation, discover conceptual gaps, and return to the book. This recursive movement is intentional: the course is designed not only to be completed, but to be revisited.
+        </p>
+      </div>
+
+      <div class="pillars">
+        <article class="pillar">
+          <div class="number">A</div>
+          <h3>Books and Papers</h3>
+          <p>
+            Written materials develop the conceptual argument, technical explanation, financial relevance, and governance framing of each topic.
+          </p>
+        </article>
+        <article class="pillar">
+          <div class="number">B</div>
+          <h3>Video and Podcast</h3>
+          <p>
+            Videos provide guided explanation, while podcasts offer conversational reinforcement and flexible review before or after class.
+          </p>
+        </article>
+        <article class="pillar">
+          <div class="number">C</div>
+          <h3>Specialized Decks and Colab</h3>
+          <p>
+            Specialized decks compress the structure of each chapter, while Colab notebooks make technical ideas executable, inspectable, reproducible, and testable.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="page" id="access">
+      <div class="access-strip">
+        <div>
+          <h2>Start with the core documents</h2>
+          <p>
+            For first-time visitors, begin with the course book, handbook, and deck. These materials orient the student to the full course architecture and provide chapter-by-chapter access to the wider learning system: books and papers, videos, podcasts, specialized decks, and Colab notebooks. The purpose is to help students explore AI before and after class in the way that best fits their questions, curiosity, and professional objectives.
+          </p>
+        </div>
+        <div class="access-buttons">
+          <a href="https://drive.google.com/file/d/1gq3Mjw63NCgbXsfMGI5fgbWAjBUMSuJf/view?usp=sharing" target="_blank" rel="noopener noreferrer">Book</a>
+          <a href="https://drive.google.com/file/d/1qDI9AcrjNOAcT8hFyvcwjrDxthq9CuXz/view?usp=sharing" target="_blank" rel="noopener noreferrer">Handbook</a>
+          <a href="https://drive.google.com/file/d/1iVTlEOUoGvkEqeIDX5fC4HPqA-7dLVlT/view?usp=sharing" target="_blank" rel="noopener noreferrer">Deck</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <strong>AI for Financial Professionals</strong><br />
+        Architecture, Governance, and Institutional Practice
+      </div>
+      <div>
+        Prepared as a landing page for course presentation and easy access to documents.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
